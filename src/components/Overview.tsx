@@ -1,38 +1,78 @@
+import type { ReactNode } from "react"
+
 import { dayParts, nextHint } from "@/lib/dates"
+import { PROPERTY } from "@/lib/property"
 import type { Schedule } from "@/lib/types"
 
-const cardClass = "rounded-2xl border border-line bg-paper px-4 py-4"
+const cardClass =
+  "flex h-full min-w-0 flex-col rounded-2xl border border-line bg-paper px-2.5 py-2.5 sm:px-4 sm:py-3"
 
 export function Overview({ schedule }: { schedule: Schedule }) {
   const { stats } = schedule
   const next = stats.nextCheckout ? dayParts(stats.nextCheckout) : null
 
   return (
-    <section id="resumo" className="scroll-mt-20 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <article className={cardClass}>
-        <p className="text-xs font-medium text-mist">A fazer</p>
-        <p className="mt-2 text-4xl font-semibold tracking-tight text-deep tabular-nums">{stats.pendentes}</p>
-      </article>
-      <article className={`${cardClass} ${stats.hoje > 0 ? "border-today/40" : ""}`}>
-        <p className="text-xs font-medium text-mist">Hoje</p>
-        <p className="mt-2 text-4xl font-semibold tracking-tight text-today tabular-nums">{stats.hoje}</p>
-      </article>
-      <article className={cardClass}>
-        <p className="text-xs font-medium text-mist">Feitas</p>
-        <p className="mt-2 text-4xl font-semibold tracking-tight text-done tabular-nums">{stats.feitas}</p>
-      </article>
-      <article className={cardClass}>
-        <p className="text-xs font-medium text-mist">Próxima</p>
-        {next ? (
-          <p className="mt-2 text-4xl font-semibold tracking-tight text-deep tabular-nums">
-            {next.day}
-            <span className="ml-1.5 text-lg font-medium text-mist">{next.month}</span>
-          </p>
-        ) : (
-          <p className="mt-2 text-4xl font-semibold tracking-tight text-deep">—</p>
-        )}
-        <p className="mt-1 text-xs text-mist">{nextHint(stats.daysUntilNext)}</p>
-      </article>
+    <section
+      id="resumo"
+      className="scroll-mt-20 grid items-stretch gap-2.5 md:grid-cols-[22rem_minmax(0,1fr)] md:gap-4 lg:grid-cols-[30rem_minmax(0,1fr)]"
+    >
+      <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
+        <img
+          src={PROPERTY.image}
+          alt="Sala do apartamento em Itaguá"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      </figure>
+      <div className="grid h-full grid-cols-2 grid-rows-2 gap-2 sm:gap-3">
+        <Stat label="A fazer" value={stats.pendentes} />
+        <Stat
+          label="Hoje"
+          value={stats.hoje}
+          tone="text-today"
+          accent={stats.hoje > 0 ? "border-today/40 bg-today/15" : ""}
+        />
+        <Stat label="Feitas" value={stats.feitas} tone="text-done" />
+        <Stat
+          label="Próxima"
+          value={
+            next ? (
+              <>
+                {next.day}
+                <span className="ml-1 text-sm font-medium leading-none text-mist sm:text-lg">{next.month}</span>
+              </>
+            ) : (
+              "—"
+            )
+          }
+          hint={nextHint(stats.daysUntilNext)}
+        />
+      </div>
     </section>
+  )
+}
+
+function Stat({
+  label,
+  value,
+  hint,
+  tone = "text-deep",
+  accent = "",
+}: {
+  label: string
+  value: ReactNode
+  hint?: string
+  tone?: string
+  accent?: string
+}) {
+  return (
+    <article className={`${cardClass} justify-center ${accent}`}>
+      <p className="text-[11px] font-medium text-mist sm:text-xs">{label}</p>
+      <p
+        className={`mt-1 flex h-8 items-baseline whitespace-nowrap text-2xl font-semibold leading-none tracking-tight tabular-nums sm:h-10 sm:text-4xl ${tone}`}
+      >
+        {value}
+      </p>
+      <p className="mt-1 h-4 text-[11px] leading-4 text-mist sm:text-xs">{hint ?? "\u00a0"}</p>
+    </article>
   )
 }

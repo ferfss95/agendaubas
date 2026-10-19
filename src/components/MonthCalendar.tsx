@@ -18,19 +18,19 @@ export function MonthCalendar({ month, today, cleanings, selected, onMonth, onSe
 
   return (
     <section className="rounded-2xl border border-line bg-paper p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-base font-semibold tracking-tight text-deep">{formatMonthTitle(month)}</h2>
-        <div className="flex items-center gap-1">
-          <IconButton label="Mês anterior" onClick={() => onMonth(shiftMonth(month, -1))}>
-            ‹
-          </IconButton>
-          <button type="button" onClick={() => onSelect(today)} className="rounded-full px-2.5 py-1.5 text-sm text-deep">
+      <div className="flex items-center gap-1">
+        <IconButton label="Mês anterior" onClick={() => onMonth(shiftMonth(month, -1))}>
+          ‹
+        </IconButton>
+        <h2 className="min-w-0 px-1 text-base font-semibold tracking-tight text-deep">{formatMonthTitle(month)}</h2>
+        <IconButton label="Próximo mês" onClick={() => onMonth(shiftMonth(month, 1))}>
+          ›
+        </IconButton>
+        {month !== today.slice(0, 7) ? (
+          <button type="button" onClick={() => onSelect(today)} className="ml-auto text-sm text-mist hover:text-deep">
             Hoje
           </button>
-          <IconButton label="Próximo mês" onClick={() => onMonth(shiftMonth(month, 1))}>
-            ›
-          </IconButton>
-        </div>
+        ) : null}
       </div>
 
       <div className="mt-4 grid grid-cols-7 text-center text-[11px] font-medium text-mist">

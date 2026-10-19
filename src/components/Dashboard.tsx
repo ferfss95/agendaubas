@@ -58,14 +58,14 @@ export function Dashboard({ initial }: { initial: Schedule }) {
   return (
     <>
       <SiteHeader syncedAt={data.syncedAt} refreshing={refreshing} onRefresh={() => void refresh(true)} />
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 sm:py-6">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 sm:py-6">
         {error ? (
           <p className="rounded-xl bg-today/10 px-4 py-3 text-sm text-deep" role="alert">
             {error}
           </p>
         ) : null}
         <Overview schedule={data} />
-        <section className="grid scroll-mt-20 gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.85fr)]" id="calendario">
+        <section className="grid scroll-mt-20 items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.85fr)]" id="calendario">
           <MonthCalendar
             month={month}
             today={data.today}

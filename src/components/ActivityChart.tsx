@@ -21,16 +21,16 @@ export function ActivityChart({ months }: { months: MonthBar[] }) {
         </div>
       </div>
 
-      <div className="mt-5 flex h-48 items-end gap-2" role="img" aria-label={chartLabel(months)}>
+      <div className="mt-4 flex h-36 items-end gap-2" role="img" aria-label={chartLabel(months)}>
         {months.map((month) => {
           const total = month.feitas + month.pendentes
-          const height = total === 0 ? 0 : Math.max(8, Math.round((total / max) * 132))
+          const height = total === 0 ? 0 : Math.max(8, Math.round((total / max) * 80))
           const doneHeight = total === 0 ? 0 : Math.round((month.feitas / total) * height)
           const pendingHeight = height - doneHeight
           return (
             <div key={month.month} className="flex min-w-0 flex-1 flex-col items-center gap-2">
               <span className="h-4 text-xs font-medium text-deep tabular-nums">{total > 0 ? total : ""}</span>
-              <div className="flex h-36 w-full items-end justify-center">
+              <div className="flex h-24 w-full items-end justify-center">
                 <div
                   className="flex w-full max-w-8 flex-col justify-end overflow-hidden rounded-md bg-foam"
                   style={{ height: Math.max(height, 3) }}

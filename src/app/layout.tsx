@@ -10,7 +10,7 @@ const geist = Geist({
 })
 
 export const metadata: Metadata = {
-  title: "Limpeza · Itaguá",
+  title: "Agenda de Limpeza · Itaguá",
   description: "Limpezas no dia do checkout.",
   robots: { index: false, follow: false },
 }
