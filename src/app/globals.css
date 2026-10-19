@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --color-ocean: #0f6f86;
+  --color-deep: #12262c;
+  --color-foam: #f3f4f5;
+  --color-ink: #1a2428;
+  --color-mist: #6b767c;
+  --color-wood: #9a6a3a;
+  --color-today: #d2652c;
+  --color-done: #1d7a62;
+  --color-paper: #ffffff;
+  --color-line: #e6e8ea;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--color-foam);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ocean);
+  outline-offset: 2px;
+}
