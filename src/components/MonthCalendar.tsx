@@ -1,4 +1,4 @@
-import { addDays, formatDay, formatFull, formatMonthTitle, nightsLabel, shiftMonth } from "@/lib/dates"
+import { addDays, formatFull, formatMonthTitle, shiftMonth } from "@/lib/dates"
 import type { Cleaning, CleaningStatus } from "@/lib/types"
 
 const WEEKDAYS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
@@ -14,7 +14,6 @@ type MonthCalendarProps = {
 
 export function MonthCalendar({ month, today, cleanings, selected, onMonth, onSelect }: MonthCalendarProps) {
   const cells = monthCells(month)
-  const line = selectionLine(selected, cleanings)
 
   return (
     <section className="rounded-2xl border border-line bg-paper p-4 sm:p-5">
@@ -65,18 +64,19 @@ export function MonthCalendar({ month, today, cleanings, selected, onMonth, onSe
         })}
       </div>
 
-      <div className="mt-4 flex gap-4 text-xs text-mist">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-mist">
         <span className="inline-flex items-center gap-2">
           <span className="h-2 w-6 rounded-full bg-deep/10" />
           Estadia
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-deep" />
-          Limpeza
+          <span className="inline-flex items-center gap-1" aria-hidden="true">
+            <span className="h-2.5 w-2.5 rounded-full bg-today" />
+            <span className="h-2.5 w-2.5 rounded-full bg-deep" />
+          </span>
+          Dia da limpeza
         </span>
       </div>
-
-      {line ? <p className="mt-3 text-sm text-deep">{line}</p> : null}
     </section>
   )
 }
@@ -98,19 +98,6 @@ function dayMark(iso: string, cleanings: Cleaning[]): Mark {
     continuesRight,
     checkout: checkout?.status ?? null,
   }
-}
-
-function selectionLine(iso: string | null, cleanings: Cleaning[]): string | null {
-  if (!iso) return null
-  const checkout = cleanings.find((item) => item.checkout === iso)
-  const stay = cleanings.find((item) => item.checkIn <= iso && iso < item.checkout)
-  if (checkout) {
-    const name = checkout.guestFirstName ? ` · ${checkout.guestFirstName}` : ""
-    const turn = checkout.turnover ? " · virada" : ""
-    return `Limpeza · ${nightsLabel(checkout.nights)}${name}${turn}`
-  }
-  if (stay) return `Estadia · limpeza ${formatDay(stay.checkout)}`
-  return null
 }
 
 function monthCells(month: string): { iso: string; inMonth: boolean }[] {
