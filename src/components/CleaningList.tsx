@@ -25,7 +25,8 @@ export function CleaningList({ cleanings, filter, onFilter, selected, onSelect }
 
   return (
     <section className="flex flex-col rounded-2xl border border-line bg-paper p-4 sm:p-5">
-      <div className="flex flex-wrap gap-1" role="tablist" aria-label="Filtrar limpezas">
+      <h2 className="text-base font-semibold tracking-tight text-deep">Limpezas</h2>
+      <div className="mt-3 flex flex-wrap gap-1" role="tablist" aria-label="Filtrar limpezas">
         {FILTERS.map((item) => {
           const active = filter === item.id
           return (

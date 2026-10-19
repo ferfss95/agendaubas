@@ -17,11 +17,12 @@ export function MonthCalendar({ month, today, cleanings, selected, onMonth, onSe
 
   return (
     <section className="rounded-2xl border border-line bg-paper p-4 sm:p-5">
-      <div className="flex items-center gap-1">
+      <h2 className="text-base font-semibold tracking-tight text-deep">Calendário</h2>
+      <div className="mt-3 flex items-center gap-1">
         <IconButton label="Mês anterior" onClick={() => onMonth(shiftMonth(month, -1))}>
           ‹
         </IconButton>
-        <h2 className="min-w-0 px-1 text-base font-semibold tracking-tight text-deep">{formatMonthTitle(month)}</h2>
+        <p className="min-w-0 px-1 text-base font-semibold tracking-tight text-deep">{formatMonthTitle(month)}</p>
         <IconButton label="Próximo mês" onClick={() => onMonth(shiftMonth(month, 1))}>
           ›
         </IconButton>

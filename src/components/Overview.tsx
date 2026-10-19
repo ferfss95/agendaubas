@@ -12,18 +12,17 @@ export function Overview({ schedule }: { schedule: Schedule }) {
   const next = stats.nextCheckout ? dayParts(stats.nextCheckout) : null
 
   return (
-    <section
-      id="resumo"
-      className="scroll-mt-20 grid items-center gap-2.5 md:grid-cols-[22rem_minmax(0,1fr)] md:gap-4 lg:grid-cols-[30rem_minmax(0,1fr)]"
-    >
-      <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
-        <img
-          src={PROPERTY.image}
-          alt="Sala do apartamento em Itaguá"
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-      </figure>
-      <div className="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3">
+    <section id="resumo" className="scroll-mt-20">
+      <h2 className="text-base font-semibold tracking-tight text-deep">Resumo</h2>
+      <div className="mt-3 grid items-center gap-2.5 md:grid-cols-[22rem_minmax(0,1fr)] md:gap-4 lg:grid-cols-[30rem_minmax(0,1fr)]">
+        <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
+          <img
+            src={PROPERTY.image}
+            alt="Sala do apartamento em Itaguá"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
+        </figure>
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3">
         <Stat label="A fazer" value={stats.pendentes} />
         <Stat
           label="Hoje"
@@ -46,6 +45,7 @@ export function Overview({ schedule }: { schedule: Schedule }) {
           }
           hint={nextHint(stats.daysUntilNext)}
         />
+        </div>
       </div>
     </section>
   )

@@ -8,7 +8,7 @@ export function ActivityChart({ months }: { months: MonthBar[] }) {
   return (
     <section id="por-mes" className="scroll-mt-20 rounded-2xl border border-line bg-paper p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold tracking-tight text-deep">Por mês</h2>
+        <h2 className="text-base font-semibold tracking-tight text-deep">Limpezas por mês</h2>
         <div className="flex gap-4 text-xs text-mist">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-deep" />
