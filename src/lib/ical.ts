@@ -12,7 +12,7 @@ export type ParsedEvent = {
   guestFirstName: string | null
 }
 
-export function parseIcal(raw: string): ParsedEvent[] {
+export function parseIcal(raw: string, options: { blockedByText?: boolean } = {}): ParsedEvent[] {
   const text = unfold(raw)
   const events: ParsedEvent[] = []
 
@@ -25,7 +25,7 @@ export function parseIcal(raw: string): ParsedEvent[] {
 
     const summary = unescapeText(fields.get("SUMMARY") ?? "")
     const uid = (fields.get("UID") ?? `${checkIn}:${checkout}:${summary}`).trim()
-    const blocked = BLOCKED.test(summary)
+    const blocked = options.blockedByText !== false && BLOCKED.test(summary)
 
     events.push({
       uid,
