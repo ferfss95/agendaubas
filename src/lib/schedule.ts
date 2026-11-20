@@ -39,15 +39,8 @@ export function getSchedule(force = false): Promise<Schedule> {
 
 async function buildSchedule(): Promise<Schedule> {
   const today = todayISO()
-  const parsed = (
-    await Promise.all(
-      readCalendarSources().map(async ({ url, blockedByText }) =>
-        parseIcal(await fetchIcal(url), { blockedByText }),
-      ),
-    )
-  ).flat()
-  const reservations = parsed.filter((event) => !event.blocked)
-  const current = reservations.map(toStored)
+  const parsed = (await Promise.all(readCalendarUrls().map(async (url) => parseIcal(await fetchIcal(url))))).flat()
+  const current = parsed.map(toStored)
   const merged = await rememberCleanings(current, today)
   const checkIns = new Set(merged.map((item) => item.checkIn))
 
@@ -68,7 +61,6 @@ async function buildSchedule(): Promise<Schedule> {
     property: PROPERTY,
     syncedAt: new Date().toISOString(),
     today,
-    ignoredBlocks: parsed.length - reservations.length,
     stats: {
       feitas,
       agendadas,
@@ -83,14 +75,12 @@ async function buildSchedule(): Promise<Schedule> {
   }
 }
 
-// O Booking marca as reservas como "CLOSED - Not available", então esse texto não significa bloqueio nesse feed.
-function readCalendarSources(): { url: string; blockedByText: boolean }[] {
-  const sources = [
-    { url: process.env.AIRBNB_ICAL_URL?.trim(), blockedByText: true },
-    { url: process.env.BOOKING_ICAL_URL?.trim(), blockedByText: false },
-  ].filter((source): source is { url: string; blockedByText: boolean } => Boolean(source.url))
-  if (sources.length === 0) throw new ScheduleError("O calendário ainda não está configurado.")
-  return sources.map((source) => ({ ...source, url: validateCalendarUrl(source.url) }))
+function readCalendarUrls(): string[] {
+  const urls = [process.env.AIRBNB_ICAL_URL, process.env.BOOKING_ICAL_URL]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value))
+  if (urls.length === 0) throw new ScheduleError("O calendário ainda não está configurado.")
+  return urls.map(validateCalendarUrl)
 }
 
 function validateCalendarUrl(url: string): string {

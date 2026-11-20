@@ -38,7 +38,6 @@ export type Schedule = {
   }
   syncedAt: string
   today: string
-  ignoredBlocks: number
   stats: ScheduleStats
   cleanings: Cleaning[]
   months: MonthBar[]
