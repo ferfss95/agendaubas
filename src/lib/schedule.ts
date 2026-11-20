@@ -39,7 +39,11 @@ export function getSchedule(force = false): Promise<Schedule> {
 
 async function buildSchedule(): Promise<Schedule> {
   const today = todayISO()
-  const parsed = (await Promise.all(readCalendarUrls().map(async (url) => parseIcal(await fetchIcal(url))))).flat()
+  const parsed = (
+    await Promise.all(
+      readCalendarSources().map(async ({ url, manualBlock }) => parseIcal(await fetchIcal(url), { manualBlock })),
+    )
+  ).flat()
   const current = parsed.map(toStored)
   const merged = await rememberCleanings(current, today)
   const checkIns = new Set(merged.map((item) => item.checkIn))
@@ -75,12 +79,17 @@ async function buildSchedule(): Promise<Schedule> {
   }
 }
 
-function readCalendarUrls(): string[] {
-  const urls = [process.env.AIRBNB_ICAL_URL, process.env.BOOKING_ICAL_URL]
-    .map((value) => value?.trim())
-    .filter((value): value is string => Boolean(value))
-  if (urls.length === 0) throw new ScheduleError("O calendário ainda não está configurado.")
-  return urls.map(validateCalendarUrl)
+// No Airbnb, bloqueios manuais aparecem como "Airbnb (Not available)". No Booking, reservas e bloqueios
+// têm o mesmo texto, então nenhuma regra de dia é aplicada a esse feed.
+const AIRBNB_MANUAL_BLOCK = /\(not available\)/i
+
+function readCalendarSources(): { url: string; manualBlock?: RegExp }[] {
+  const sources = [
+    { url: process.env.AIRBNB_ICAL_URL?.trim(), manualBlock: AIRBNB_MANUAL_BLOCK },
+    { url: process.env.BOOKING_ICAL_URL?.trim(), manualBlock: undefined },
+  ].filter((source): source is { url: string; manualBlock?: RegExp } => Boolean(source.url))
+  if (sources.length === 0) throw new ScheduleError("O calendário ainda não está configurado.")
+  return sources.map((source) => ({ ...source, url: validateCalendarUrl(source.url) }))
 }
 
 function validateCalendarUrl(url: string): string {

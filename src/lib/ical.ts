@@ -1,5 +1,7 @@
 import "server-only"
 
+import { addDays } from "@/lib/dates"
+
 const BLOCKED = /not available|unavailable|blocked|indispon[ií]vel|bloquead/i
 const GENERIC =
   /^(reserved|reservation|reservado|reserva|airbnb|busy|ocupado|bloqueado|blocked|indispon[ií]vel|fechado)$/i
@@ -11,7 +13,7 @@ export type ParsedEvent = {
   guestFirstName: string | null
 }
 
-export function parseIcal(raw: string): ParsedEvent[] {
+export function parseIcal(raw: string, options: { manualBlock?: RegExp } = {}): ParsedEvent[] {
   const text = unfold(raw)
   const events: ParsedEvent[] = []
 
@@ -19,11 +21,12 @@ export function parseIcal(raw: string): ParsedEvent[] {
     const body = chunk.split("END:VEVENT")[0] ?? ""
     const fields = readFields(body)
     const checkIn = dateOnly(fields.get("DTSTART"))
-    const checkout = dateOnly(fields.get("DTEND"))
-    if (!checkIn || !checkout || checkout <= checkIn) continue
+    const endExclusive = dateOnly(fields.get("DTEND"))
+    if (!checkIn || !endExclusive || endExclusive <= checkIn) continue
 
     const summary = unescapeText(fields.get("SUMMARY") ?? "")
-    const uid = (fields.get("UID") ?? `${checkIn}:${checkout}:${summary}`).trim()
+    const uid = (fields.get("UID") ?? `${checkIn}:${endExclusive}:${summary}`).trim()
+    const checkout = manualBlockCheckout(summary, checkIn, endExclusive, options.manualBlock)
     events.push({
       uid,
       checkIn,
@@ -33,6 +36,14 @@ export function parseIcal(raw: string): ParsedEvent[] {
   }
 
   return events
+}
+
+// Bloqueio manual: o calendário exporta o DTEND no dia seguinte ao último dia digitado,
+// então a limpeza cai no dia anterior ao DTEND. Reservas reais seguem com o DTEND.
+function manualBlockCheckout(summary: string, checkIn: string, endExclusive: string, pattern?: RegExp): string {
+  if (!pattern || !pattern.test(summary)) return endExclusive
+  const shifted = addDays(endExclusive, -1)
+  return shifted > checkIn ? shifted : endExclusive
 }
 
 function unfold(raw: string): string {
